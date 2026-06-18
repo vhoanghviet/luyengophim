@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EdTech TypeRacer - Đường Đua Tốc Độ</title>
+    <title>EdTech TypeRacer - Bản Cập Nhật UX</title>
     <style>
-        /* --- TOÀN CỤC & THEME --- */
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
@@ -48,12 +47,10 @@
             text-align: center;
             margin-bottom: 1.5rem;
             color: var(--primary);
-            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        /* --- VÙNG CẤU HÌNH VĂN BẢN --- */
         .config-section {
             margin-bottom: 1.5rem;
             background: rgba(15, 23, 42, 0.6);
@@ -77,10 +74,9 @@
             color: var(--text-main);
             padding: 0.5rem;
             resize: none;
-            font-size: 0.95rem;
         }
 
-        /* --- ĐƯỜNG ĐUA (RACETRACK) --- */
+        /* RACETRACK */
         .racetrack {
             background: #0f172a;
             padding: 1.5rem;
@@ -89,81 +85,50 @@
             border: 1px solid #334155;
         }
 
-        .lane {
-            margin-bottom: 1rem;
-        }
-
-        .lane:last-child {
-            margin-bottom: 0;
-        }
-
-        .lane-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            margin-bottom: 0.3rem;
-        }
-
+        .lane { margin-bottom: 1rem; }
+        .lane:last-child { margin-bottom: 0; }
+        .lane-info { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem; }
         .bot-name { color: var(--warning); }
         .player-name { color: var(--primary); font-weight: bold; }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 12px;
-            background: #334155;
-            border-radius: 6px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            transition: width 0.2s ease-out;
-            border-radius: 6px;
-        }
-
+        .progress-bar-bg { width: 100%; height: 12px; background: #334155; border-radius: 6px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; width: 0%; transition: width 0.2s ease-out; }
         .lane-player .progress-bar-fill { background: linear-gradient(90deg, #0284c7, var(--primary)); }
         .lane-bot1 .progress-bar-fill { background: linear-gradient(90deg, #b45309, var(--warning)); }
         .lane-bot2 .progress-bar-fill { background: linear-gradient(90deg, #be123c, var(--error)); }
 
-        /* --- VÙNG HIỂN THỊ ĐOẠN VĂN MẪU --- */
+        /* VÙNG ĐOẠN VĂN MẪU CÓ GIỚI HẠN CHIỀU CAO & AUTO SCROLL */
         .text-display {
             background: #0f172a;
             padding: 1.5rem;
             border-radius: 12px;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             line-height: 1.8;
-            letter-spacing: 0.5px;
             font-family: var(--font-code);
-            margin-bottom: 1.5rem;
-            border: 1px solid #334155;
+            margin-bottom: 1rem;
+            border: 2px solid #334155;
             word-wrap: break-word;
             user-select: none;
+            max-height: 160px; /* Giới hạn chiều cao cố định */
+            overflow-y: auto;  /* Tự động xuất hiện cuộn dọc nếu đoạn văn quá dài */
+            scroll-behavior: smooth;
         }
 
         .char-correct {
             color: var(--success);
-            background-color: rgba(34, 197, 94, 0.15);
+            background-color: rgba(34, 197, 94, 0.1);
         }
 
         .char-incorrect {
-            color: var(--text-main);
-            background-color: rgba(239, 68, 68, 0.4);
-            border-bottom: 2px solid var(--error);
+            color: #ffffff;
+            background-color: rgba(239, 68, 68, 0.8); /* Hiện rõ chữ lỗi màu đỏ nền sáng */
         }
 
         .char-current {
             background-color: rgba(56, 189, 248, 0.3);
             border-bottom: 2px solid var(--primary);
-            animation: blink 1s infinite;
         }
 
-        @keyframes blink {
-            50% { background-color: transparent; }
-        }
-
-        /* --- Ô NHẬP LIỆU & THÔNG SỐ --- */
+        /* Ô NHẬP LIỆU */
         .input-panel {
             display: flex;
             gap: 1rem;
@@ -174,96 +139,33 @@
         .type-input {
             flex: 1;
             padding: 1rem;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             border-radius: 8px;
             border: 2px solid #334155;
             background: #0f172a;
             color: var(--text-main);
             outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .type-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
         }
 
         .type-input.input-error {
             border-color: var(--error);
             background: rgba(239, 68, 68, 0.05);
+            color: var(--error); /* Chữ đang gõ sai dưới ô input cũng đổi màu */
         }
 
-        .stats {
-            display: flex;
-            gap: 1rem;
-            font-weight: bold;
-            font-size: 1.1rem;
-            min-width: 220px;
-            justify-content: space-between;
-        }
+        .stats { display: flex; gap: 1rem; font-weight: bold; min-width: 220px; }
+        .stat-box { background: #334155; padding: 0.5rem; border-radius: 8px; flex: 1; text-align: center; }
+        .stat-box span { display: block; font-size: 0.75rem; color: var(--text-muted); }
 
-        .stat-box {
-            background: #334155;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            flex: 1;
-            text-align: center;
-        }
-
-        .stat-box span {
-            display: block;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        /* --- ĐIỀU KHIỂN & KẾT QUẢ --- */
-        .control-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .btn {
-            background: var(--primary);
-            color: #0f172a;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn:hover { background: #7dd3fc; }
+        .control-panel { display: flex; justify-content: space-between; align-items: center; }
+        .btn { background: var(--primary); color: #0f172a; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+        .countdown { font-size: 1.5rem; font-weight: bold; color: var(--warning); }
 
-        .countdown {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--warning);
-        }
-
-        .leaderboard {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #334155;
-            display: none;
-        }
-
-        .leaderboard h3 {
-            margin-bottom: 0.5rem;
-            color: var(--success);
-        }
-
-        .leaderboard ol {
-            padding-left: 1.5rem;
-        }
-
-        .leaderboard li {
-            margin-bottom: 0.25rem;
-        }
+        .leaderboard { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #334155; display: none; }
+        .leaderboard h3 { color: var(--success); margin-bottom: 0.5rem; }
+        ol { padding-left: 1.5rem; }
+        li { margin-bottom: 0.25rem; }
     </style>
 </head>
 <body>
@@ -272,53 +174,32 @@
         <h1>EdTech TypeRacer</h1>
 
         <div class="config-section" id="configSection">
-            <label for="customText">Tùy chỉnh đoạn văn bản luyện tập của bạn:</label>
-            <textarea id="customText">Một lập trình viên Full-stack giỏi không chỉ làm chủ mã nguồn mà còn phải am hiểu trải nghiệm người dùng.</textarea>
+            <label for="customText">Nhập hoặc dán đoạn văn bản dài tùy thích vào đây:</label>
+            <textarea id="customText">Học lập trình không phải là học thuộc lòng các cú pháp câu lệnh. Bản chất của nó là rèn luyện tư duy logic, khả năng giải quyết vấn đề và cách tổ chức hệ thống cấu trúc dữ liệu một cách tối ưu nhất. Khi bạn đối mặt với một đoạn văn bản dài hoặc một thuật toán phức tạp, hãy chia nhỏ nó ra thành từng phần để xử lý như cách chúng ta xây dựng từng khối module trong công nghệ phần mềm hiện đại vậy.</textarea>
         </div>
         
         <div class="racetrack">
             <div class="lane lane-player">
-                <div class="lane-info">
-                    <span class="player-name">Bạn (Người chơi)</span>
-                    <span id="playerProgressText">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="playerProgress"></div>
-                </div>
+                <div class="lane-info"><span class="player-name">Bạn (Người chơi)</span><span id="playerProgressText">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="playerProgress"></div></div>
             </div>
             <div class="lane lane-bot1">
-                <div class="lane-info">
-                    <span class="bot-name">🤖 Bot Cần Mẫn (Trung bình)</span>
-                    <span id="bot1ProgressText">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="bot1Progress"></div>
-                </div>
+                <div class="lane-info"><span class="bot-name">🤖 Bot Cần Mẫn (Trung bình)</span><span id="bot1ProgressText">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bot1Progress"></div></div>
             </div>
             <div class="lane lane-bot2">
-                <div class="lane-info">
-                    <span class="bot-name">⚡ Bot Siêu Tốc (Khó)</span>
-                    <span id="bot2ProgressText">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="bot2Progress"></div>
-                </div>
+                <div class="lane-info"><span class="bot-name">⚡ Bot Siêu Tốc (Khó)</span><span id="bot2ProgressText">0%</span></div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bot2Progress"></div></div>
             </div>
         </div>
 
         <div class="text-display" id="textDisplay"></div>
 
         <div class="input-panel">
-            <input type="text" class="type-input" id="typeInput" placeholder="Nhấp 'Bắt đầu đua' để gõ..." disabled autocomplete="off">
+            <input type="text" class="type-input" id="typeInput" placeholder="Bấm nút bắt đầu để mở khóa đua..." disabled autocomplete="off">
             <div class="stats">
-                <div class="stat-box">
-                    <span id="wpmLabel">WPM</span>
-                    <div id="wpmDisplay">0</div>
-                </div>
-                <div class="stat-box">
-                    <span>Thời gian</span>
-                    <div id="timeDisplay">0s</div>
-                </div>
+                <div class="stat-box"><span>WPM</span><div id="wpmDisplay">0</div></div>
+                <div class="stat-box"><span>Thời gian</span><div id="timeDisplay">0s</div></div>
             </div>
         </div>
         
@@ -328,31 +209,28 @@
         </div>
 
         <div class="leaderboard" id="leaderboard">
-            <h3>Bảng Xếp Hạng Trận Đấu</h3>
+            <h3>Kết Quả Chung Cuộc</h3>
             <ol id="rankList"></ol>
         </div>
     </div>
 
     <script>
-        // --- 1. KHỞI TẠO BIẾN TOÀN CỤC & TRẠNG THÁI ---
         let targetText = "";
         let timerInterval = null;
         let botInterval = null;
         let startTime = null;
         let isPlaying = false;
 
-        // Trạng thái khóa nhập khi sai chữ
-        let validText = ""; 
+        // Lưu vị trí chỉ số (index) ký tự ĐÚNG liên tục cuối cùng
+        let lastCorrectIndex = 0; 
 
-        // Cấu hình Bot
         let bots = [
-            { id: 1, name: "🤖 Bot Cần Mẫn", baseWpm: 45, progress: 0, finished: false, finishTime: null, element: document.getElementById('bot1Progress'), textElement: document.getElementById('bot1ProgressText') },
-            { id: 2, name: "⚡ Bot Siêu Tốc", baseWpm: 75, progress: 0, finished: false, finishTime: null, element: document.getElementById('bot2Progress'), textElement: document.getElementById('bot2ProgressText') }
+            { id: 1, name: "🤖 Bot Cần Mẫn", baseWpm: 40, progress: 0, finished: false, element: document.getElementById('bot1Progress'), textElement: document.getElementById('bot1ProgressText') },
+            { id: 2, name: "⚡ Bot Siêu Tốc", baseWpm: 70, progress: 0, finished: false, element: document.getElementById('bot2Progress'), textElement: document.getElementById('bot2ProgressText') }
         ];
 
         let ranks = [];
 
-        // DOM Elements
         const customText = document.getElementById('customText');
         const textDisplay = document.getElementById('textDisplay');
         const typeInput = document.getElementById('typeInput');
@@ -365,65 +243,70 @@
         const leaderboard = document.getElementById('leaderboard');
         const rankList = document.getElementById('rankList');
 
-        // --- 2. LẮNG NGHE SỰ KIỆN KHỞI CHẠY ---
         startBtn.addEventListener('click', initCountdown);
-        typeInput.addEventListener('input', handleTyping);
+        typeInput.addEventListener('input', handleTypingUXUpdate);
 
-        // Hiển thị text ban đầu cho trực quan
-        renderTextDisplay("");
+        // Render cấu trúc chữ ban đầu
+        renderTextHTML("", 0);
 
-        function renderTextDisplay(typedText) {
+        // Tạo thẻ span cho từng ký tự để đổi màu linh hoạt
+        function renderTextHTML(inputValue, currentCorrectLen) {
             targetText = customText.value.trim();
             textDisplay.innerHTML = "";
             
+            let activeSpan = null;
+
             for (let i = 0; i < targetText.length; i++) {
                 const span = document.createElement('span');
                 span.innerText = targetText[i];
                 
-                if (i < typedText.length) {
-                    if (typedText[i] === targetText[i]) {
-                        span.classList.add('char-correct');
+                if (i < inputValue.length) {
+                    // Nếu nằm trong phạm vi người dùng đã gõ
+                    if (i < currentCorrectLen) {
+                        span.classList.add('char-correct'); // Đoạn gõ đúng màu xanh
                     } else {
-                        span.classList.add('char-incorrect');
+                        span.classList.add('char-incorrect'); // Đoạn gõ sai hiển thị nền Đỏ rõ ràng
                     }
-                } else if (i === typedText.length && isPlaying) {
-                    span.classList.add('char-current');
+                } else if (i === inputValue.length && isPlaying) {
+                    span.classList.add('char-current'); // Con trỏ ký tự hiện tại
+                    activeSpan = span;
                 }
                 textDisplay.appendChild(span);
             }
+
+            // [SỬA LỖI 1]: Tự động cuộn phần hiển thị để ký tự hiện tại luôn nằm trong khung nhìn
+            if (activeSpan) {
+                activeSpan.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
         }
 
-        // --- 3. LOGIC ĐẾM NGƯỢC (COUNTDOWN LOOP) ---
         function initCountdown() {
             if (isPlaying) return;
             
-            // Thiết lập lại toàn bộ giao diện & dữ liệu trận đấu
             targetText = customText.value.trim();
-            if(!targetText) {
-                alert("Vui lòng không để trống đoạn văn bản!");
-                return;
-            }
+            if(!targetText) return alert("Vui lòng nhập văn bản!");
 
             customText.disabled = true;
             startBtn.disabled = true;
             typeInput.value = "";
-            validText = "";
+            lastCorrectIndex = 0;
             timeDisplay.innerText = "0s";
             wpmDisplay.innerText = "0";
             playerProgress.style.width = "0%";
             playerProgressText.innerText = "0%";
             leaderboard.style.display = "none";
-            rankList.innerHTML = "";
             
             bots.forEach(bot => {
                 bot.progress = 0;
                 bot.finished = false;
-                bot.finishTime = null;
                 bot.element.style.width = "0%";
                 bot.textElement.innerText = "0%";
             });
             ranks = [];
-            renderTextDisplay("");
+            renderTextHTML("", 0);
 
             let count = 3;
             countdownDisplay.innerText = `Sẵn sàng: ${count}`;
@@ -440,71 +323,65 @@
             }, 1000);
         }
 
-        // --- 4. KHỞI CHẠY GAME LOOP ---
         function startGame() {
             isPlaying = true;
             startTime = new Date();
             typeInput.disabled = false;
+            typeInput.placeholder = "Gõ đoạn văn trên tại đây...";
             typeInput.focus();
-            renderTextDisplay("");
+            renderTextHTML("", 0);
 
-            // Chạy đồng hồ tính giờ của Người chơi
             timerInterval = setInterval(() => {
-                let elapsedSeconds = Math.floor((new Date() - startTime) / 1000);
-                timeDisplay.innerText = `${elapsedSeconds}s`;
-                calculateWPM(elapsedSeconds);
+                let elapsed = Math.floor((new Date() - startTime) / 1000);
+                timeDisplay.innerText = `${elapsed}s`;
+                if (elapsed > 0) {
+                    let words = lastCorrectIndex / 5;
+                    wpmDisplay.innerText = Math.round(words / (elapsed / 60));
+                }
             }, 1000);
 
-            // Chạy vòng lặp điều khiển Bot (Cập nhật mỗi 1 giây)
             startBotSimulation();
         }
 
-        // --- 5. THUẬT TOÁN KIỂM TRA CHỮ & KHÓA KHI SAI ---
-        function handleTyping(e) {
+        // [SỬA LỖI 2]: LOGIC SO KHỚP CHỮ KIỂU TYPERACER THỰC TẾ
+        function handleTypingUXUpdate() {
             if (!isPlaying) return;
 
-            let currentInput = typeInput.value;
-            let currentLength = currentInput.length;
-
-            // Kiểm tra xem ký tự vừa nhập có khớp với đoạn text mẫu không
-            if (targetText.startsWith(currentInput)) {
-                // ĐÚNG: Cập nhật chuỗi hợp lệ mới nhất, gỡ bỏ cảnh báo lỗi
-                validText = currentInput;
-                typeInput.classList.remove('input-error');
-                
-                // Cập nhật tiến độ của Người chơi
-                let progressPercent = Math.floor((validText.length / targetText.length) * 100);
-                playerProgress.style.width = `${progressPercent}%`;
-                playerProgressText.innerText = `${progressPercent}%`;
-
-                // Kiểm tra hoàn thành đường đua
-                if (validText === targetText) {
-                    finishRace("Bạn (Người chơi)");
-                }
-            } else {
-                // SAI KÝ TỰ: Thực hiện KHÓA (Không cho nhập thêm chuỗi sai)
-                // Ép giá trị input quay về chuỗi hợp lệ trước đó, chặn đứng việc gõ tràn lan
-                typeInput.value = validText; 
-                typeInput.classList.add('input-error');
-                
-                // Hiệu ứng rung nhẹ vùng nhập liệu để gia tăng trải nghiệm EdTech
-                typeInput.style.transform = "translateX(4px)";
-                setTimeout(() => typeInput.style.transform = "translateX(0)", 50);
+            let inputValue = typeInput.value;
+            
+            // Tìm độ dài chuỗi khớp đúng liên tục tính từ ký tự đầu tiên
+            let currentCorrectLen = 0;
+            while (currentCorrectLen < inputValue.length && 
+                   currentCorrectLen < targetText.length && 
+                   inputValue[currentCorrectLen] === targetText[currentCorrectLen]) {
+                currentCorrectLen++;
             }
 
-            renderTextDisplay(validText);
+            lastCorrectIndex = currentCorrectLen;
+
+            // Kiểm tra trạng thái lỗi để cập nhật khung Input
+            if (currentCorrectLen < inputValue.length) {
+                // Nếu độ dài gõ đúng nhỏ hơn độ dài đang nhập -> Đang có ký tự SAI hiện diện
+                typeInput.classList.add('input-error');
+            } else {
+                typeInput.classList.remove('input-error');
+            }
+
+            // Cập nhật tiến trình của người chơi dựa trên số ký tự ĐÚNG
+            let progressPercent = Math.floor((currentCorrectLen / targetText.length) * 100);
+            playerProgress.style.width = `${progressPercent}%`;
+            playerProgressText.innerText = `${progressPercent}%`;
+
+            // Render lại màu chữ trên màn hình (vừa cập nhật màu đỏ lỗi, vừa kích hoạt cuộn)
+            renderTextHTML(inputValue, currentCorrectLen);
+
+            // Kiểm tra xem đã hoàn thành toàn bộ bài chưa
+            if (currentCorrectLen === targetText.length) {
+                finishRace("Bạn (Người chơi)");
+            }
         }
 
-        // Tính chỉ số tốc độ WPM
-        function calculateWPM(elapsedSeconds) {
-            if (elapsedSeconds <= 0) return;
-            let words = validText.length / 5; // Quy ước tiêu chuẩn 5 ký tự = 1 từ
-            let minutes = elapsedSeconds / 60;
-            let wpm = Math.round(words / minutes);
-            wpmDisplay.innerText = wpm;
-        }
-
-        // --- 6. THUẬT TOÁN ĐIỀU KHIỂN BOT DYNAMIC ---
+        // THUẬT TOÁN ĐIỀU KHIỂN BOT DYNAMIC
         function startBotSimulation() {
             botInterval = setInterval(() => {
                 let totalChars = targetText.length;
@@ -512,21 +389,13 @@
 
                 bots.forEach(bot => {
                     if (bot.finished) return;
-                    
                     allBotsFinished = false;
 
-                    // Ứng dụng Random Walk biến thiên vận tốc theo từng giây (-12 đến +12 WPM)
-                    let variance = Math.floor(Math.random() * 25) - 12; 
+                    let variance = Math.floor(Math.random() * 20) - 10; 
                     let currentWpm = bot.baseWpm + variance;
-                    if(currentWpm < 15) currentWpm = 15; // Giới hạn tốc độ tối thiểu của bot
-
-                    // Chuyển đổi từ số WPM ngẫu nhiên đó sang lượng ký tự gõ được trong 1 giây này
-                    let charsPerSecond = (currentWpm * 5) / 60;
+                    let charsPerSecond = (Math.max(currentWpm, 10) * 5) / 60;
                     
-                    // Tiến triển chuỗi ký tự của bot
                     let currentBotChars = (bot.progress / 100) * totalChars + charsPerSecond;
-                    
-                    // Tính toán lại tỷ lệ phần trăm thực tế
                     let progressPercent = Math.min(Math.floor((currentBotChars / totalChars) * 100), 100);
                     
                     bot.progress = progressPercent;
@@ -539,19 +408,13 @@
                     }
                 });
 
-                if (allBotsFinished && !isPlaying) {
-                    clearInterval(botInterval);
-                }
+                if (allBotsFinished) clearInterval(botInterval);
             }, 1000);
         }
 
-        // --- 7. XỬ LÝ KẾT THÚC ĐƯỜNG ĐUA ---
         function finishRace(runnerName) {
-            if (!ranks.includes(runnerName)) {
-                ranks.push(runnerName);
-            }
+            if (!ranks.includes(runnerName)) ranks.push(runnerName);
 
-            // Nếu người chơi hoàn thành
             if (runnerName === "Bạn (Người chơi)") {
                 isPlaying = false;
                 clearInterval(timerInterval);
@@ -559,9 +422,8 @@
                 typeInput.disabled = true;
                 customText.disabled = false;
                 startBtn.disabled = false;
-                countdownDisplay.innerText = "HOÀN THÀNH VÒNG ĐUA!";
+                countdownDisplay.innerText = "HẾT GIỜ ĐUA!";
                 
-                // Cho các con bot còn lại kết thúc ngẫu nhiên vào danh sách xếp hạng nếu chưa xong
                 bots.forEach(bot => {
                     if (!bot.finished) {
                         ranks.push(bot.name);
@@ -570,7 +432,6 @@
                         bot.textElement.innerText = "100%";
                     }
                 });
-
                 showLeaderboard();
             }
         }
@@ -581,12 +442,6 @@
             ranks.forEach((name, index) => {
                 const li = document.createElement('li');
                 li.innerHTML = `Hạng ${index + 1}: <strong>${name}</strong>`;
-                if(name === "Bạn (Người chơi)") {
-                    li.style.color = "var(--primary)";
-                }
+                if(name === "Bạn (Người chơi)") li.style.color = "var(--primary)";
                 rankList.appendChild(li);
             });
-        }
-    </script>
-</body>
-</html>
