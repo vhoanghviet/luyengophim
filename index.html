@@ -1,447 +1,932 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EdTech TypeRacer - Bản Cập Nhật UX</title>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #64748b;
-            --primary: #38bdf8;
-            --success: #22c55e;
-            --error: #ef4444;
-            --warning: #eab308;
-            --font-code: 'Courier New', Courier, monospace;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TỐC ĐỘ // Đua Gõ Chữ</title>
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --track-night:#0c0f14;
+    --track-night-2:#12161d;
+    --asphalt:#1a1f29;
+    --lane-line:#2a313f;
+    --chalk:#e8eaef;
+    --chalk-dim:#7b8494;
+    --speed-amber:#ffb02e;
+    --speed-amber-dim:#7a5a1f;
+    --go-green:#3ddc84;
+    --stop-red:#ff4d5e;
+    --player-blue:#4ea1ff;
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    --font-display:'Oswald', 'Arial Narrow', sans-serif;
+    --font-mono:'JetBrains Mono','Courier New',monospace;
+    --font-body:'Inter',-apple-system,sans-serif;
+  }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 2rem 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
 
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-        }
+  body{
+    background:
+      radial-gradient(ellipse at top, var(--track-night-2), var(--track-night) 70%);
+    color:var(--chalk);
+    font-family:var(--font-body);
+    min-height:100vh;
+    padding:32px 16px 64px;
+    background-attachment:fixed;
+  }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+  /* subtle asphalt grain via repeating gradient */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:repeating-linear-gradient(
+      0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px,
+      transparent 1px, transparent 3px
+    );
+    pointer-events:none;
+    z-index:0;
+  }
 
-        .config-section {
-            margin-bottom: 1.5rem;
-            background: rgba(15, 23, 42, 0.6);
-            padding: 1rem;
-            border-radius: 8px;
-        }
+  .container{
+    max-width:920px;
+    margin:0 auto;
+    position:relative;
+    z-index:1;
+  }
 
-        .config-section label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
+  /* ============ HEADER ============ */
+  header{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  header .eyebrow{
+    font-family:var(--font-mono);
+    letter-spacing:.35em;
+    font-size:11px;
+    color:var(--speed-amber);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  header h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(32px,6vw,52px);
+    letter-spacing:.02em;
+    text-transform:uppercase;
+    margin:0;
+    color:var(--chalk);
+    text-shadow:0 0 24px rgba(255,176,46,0.18);
+  }
+  header h1 span{ color:var(--speed-amber); }
+  header p.sub{
+    color:var(--chalk-dim);
+    font-size:14px;
+    margin-top:8px;
+  }
 
-        .config-section textarea {
-            width: 100%;
-            height: 60px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            color: var(--text-main);
-            padding: 0.5rem;
-            resize: none;
-        }
+  /* ============ PANELS ============ */
+  .panel{
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:10px;
+    padding:22px;
+    margin-bottom:20px;
+  }
 
-        /* RACETRACK */
-        .racetrack {
-            background: #0f172a;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            border: 1px solid #334155;
-        }
+  /* ============ INPUT SECTION ============ */
+  .input-section label{
+    display:block;
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--chalk-dim);
+    margin-bottom:8px;
+  }
+  textarea#customText{
+    width:100%;
+    min-height:90px;
+    resize:vertical;
+    background:var(--track-night);
+    border:1px solid var(--lane-line);
+    border-radius:8px;
+    color:var(--chalk);
+    font-family:var(--font-mono);
+    font-size:14px;
+    line-height:1.6;
+    padding:12px 14px;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  textarea#customText:focus{
+    border-color:var(--speed-amber);
+  }
 
-        .lane { margin-bottom: 1rem; }
-        .lane:last-child { margin-bottom: 0; }
-        .lane-info { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem; }
-        .bot-name { color: var(--warning); }
-        .player-name { color: var(--primary); font-weight: bold; }
-        .progress-bar-bg { width: 100%; height: 12px; background: #334155; border-radius: 6px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; width: 0%; transition: width 0.2s ease-out; }
-        .lane-player .progress-bar-fill { background: linear-gradient(90deg, #0284c7, var(--primary)); }
-        .lane-bot1 .progress-bar-fill { background: linear-gradient(90deg, #b45309, var(--warning)); }
-        .lane-bot2 .progress-bar-fill { background: linear-gradient(90deg, #be123c, var(--error)); }
+  .controls-row{
+    display:flex;
+    gap:14px;
+    margin-top:14px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
 
-        /* VÙNG ĐOẠN VĂN MẪU CÓ GIỚI HẠN CHIỀU CAO & AUTO SCROLL */
-        .text-display {
-            background: #0f172a;
-            padding: 1.5rem;
-            border-radius: 12px;
-            font-size: 1.3rem;
-            line-height: 1.8;
-            font-family: var(--font-code);
-            margin-bottom: 1rem;
-            border: 2px solid #334155;
-            word-wrap: break-word;
-            user-select: none;
-            max-height: 160px; /* Giới hạn chiều cao cố định */
-            overflow-y: auto;  /* Tự động xuất hiện cuộn dọc nếu đoạn văn quá dài */
-            scroll-behavior: smooth;
-        }
+  select#difficulty{
+    background:var(--track-night);
+    border:1px solid var(--lane-line);
+    color:var(--chalk);
+    font-family:var(--font-mono);
+    font-size:13px;
+    padding:10px 12px;
+    border-radius:8px;
+    outline:none;
+    cursor:pointer;
+  }
 
-        .char-correct {
-            color: var(--success);
-            background-color: rgba(34, 197, 94, 0.1);
-        }
+  .btn{
+    font-family:var(--font-display);
+    font-weight:600;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    font-size:14px;
+    padding:11px 26px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{
+    background:var(--speed-amber);
+    color:#1a1306;
+    box-shadow:0 0 0 rgba(255,176,46,0);
+  }
+  .btn-primary:hover{
+    box-shadow:0 4px 18px rgba(255,176,46,0.35);
+  }
+  .btn-primary:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+    box-shadow:none;
+  }
+  .btn-ghost{
+    background:transparent;
+    color:var(--chalk-dim);
+    border:1px solid var(--lane-line);
+  }
+  .btn-ghost:hover{
+    color:var(--chalk);
+    border-color:var(--chalk-dim);
+  }
 
-        .char-incorrect {
-            color: #ffffff;
-            background-color: rgba(239, 68, 68, 0.8); /* Hiện rõ chữ lỗi màu đỏ nền sáng */
-        }
+  /* ============ RACE TRACK ============ */
+  .race-track{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .racer-row{
+    display:grid;
+    grid-template-columns:120px 1fr 56px;
+    align-items:center;
+    gap:12px;
+  }
+  .racer-row .racer-name{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--chalk-dim);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .racer-row.is-player .racer-name{ color:var(--player-blue); font-weight:600; }
+  .racer-dot{
+    width:8px; height:8px; border-radius:50%;
+    flex-shrink:0;
+  }
 
-        .char-current {
-            background-color: rgba(56, 189, 248, 0.3);
-            border-bottom: 2px solid var(--primary);
-        }
+  .lane{
+    position:relative;
+    height:26px;
+    background:repeating-linear-gradient(
+      90deg, var(--asphalt) 0 18px, var(--track-night-2) 18px 20px
+    );
+    border-radius:5px;
+    overflow:hidden;
+    border:1px solid var(--lane-line);
+  }
+  .lane::after{
+    /* finish line marker */
+    content:"";
+    position:absolute;
+    right:0; top:0; bottom:0;
+    width:4px;
+    background:repeating-linear-gradient(45deg, var(--chalk) 0 4px, transparent 4px 8px);
+    opacity:.5;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    border-radius:4px 0 0 4px;
+    transition:width .12s linear;
+    position:relative;
+  }
+  .racer-row.is-player .progress-fill{ background:linear-gradient(90deg, var(--player-blue), #7ec4ff); }
+  .racer-row.is-bot .progress-fill{ background:linear-gradient(90deg, var(--speed-amber-dim), var(--speed-amber)); }
+  .progress-fill.finished{ background:linear-gradient(90deg, #1f9d57, var(--go-green)) !important; }
 
-        /* Ô NHẬP LIỆU */
-        .input-panel {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
+  .racer-row .pct{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--chalk-dim);
+    text-align:right;
+  }
 
-        .type-input {
-            flex: 1;
-            padding: 1rem;
-            font-size: 1.2rem;
-            border-radius: 8px;
-            border: 2px solid #334155;
-            background: #0f172a;
-            color: var(--text-main);
-            outline: none;
-        }
+  /* ============ STATS ============ */
+  .stats-panel{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    text-align:center;
+  }
+  .stat-box .stat-label{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--chalk-dim);
+    margin-bottom:4px;
+  }
+  .stat-box .stat-value{
+    font-family:var(--font-display);
+    font-size:28px;
+    font-weight:600;
+    color:var(--speed-amber);
+  }
+  .stat-box .stat-value.accent-green{ color:var(--go-green); }
+  .stat-box .stat-value.accent-red{ color:var(--stop-red); }
 
-        .type-input.input-error {
-            border-color: var(--error);
-            background: rgba(239, 68, 68, 0.05);
-            color: var(--error); /* Chữ đang gõ sai dưới ô input cũng đổi màu */
-        }
+  /* ============ TEXT DISPLAY ============ */
+  .text-display{
+    font-family:var(--font-mono);
+    font-size:19px;
+    line-height:1.9;
+    letter-spacing:.01em;
+    padding:20px 22px;
+    background:var(--track-night);
+    border:1px solid var(--lane-line);
+    border-radius:8px;
+    user-select:none;
+    word-wrap:break-word;
+  }
+  .text-display.locked-error{
+    animation:shakeField .18s ease;
+  }
+  @keyframes shakeField{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-4px); }
+    75%{ transform:translateX(4px); }
+  }
 
-        .stats { display: flex; gap: 1rem; font-weight: bold; min-width: 220px; }
-        .stat-box { background: #334155; padding: 0.5rem; border-radius: 8px; flex: 1; text-align: center; }
-        .stat-box span { display: block; font-size: 0.75rem; color: var(--text-muted); }
+  .char{ position:relative; }
+  .char.untyped{ color:var(--chalk-dim); }
+  .char.correct{ color:var(--go-green); }
+  .char.incorrect{
+    color:var(--stop-red);
+    background:rgba(255,77,94,0.16);
+    border-radius:2px;
+  }
+  .char.current{
+    background:var(--speed-amber);
+    color:#1a1306;
+    border-radius:2px;
+    animation:blinkCursor 1s step-start infinite;
+  }
+  @keyframes blinkCursor{
+    50%{ background:rgba(255,176,46,0.45); color:var(--chalk); }
+  }
 
-        .control-panel { display: flex; justify-content: space-between; align-items: center; }
-        .btn { background: var(--primary); color: #0f172a; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn:disabled { background: var(--text-muted); cursor: not-allowed; }
-        .countdown { font-size: 1.5rem; font-weight: bold; color: var(--warning); }
+  #hiddenInput{
+    position:absolute;
+    opacity:0;
+    height:1px; width:1px;
+    pointer-events:none;
+  }
 
-        .leaderboard { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #334155; display: none; }
-        .leaderboard h3 { color: var(--success); margin-bottom: 0.5rem; }
-        ol { padding-left: 1.5rem; }
-        li { margin-bottom: 0.25rem; }
-    </style>
+  .hint-row{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--chalk-dim);
+    font-family:var(--font-mono);
+    text-align:center;
+  }
+
+  /* ============ RESULT MODAL ============ */
+  .result-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(8,10,14,0.78);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+    padding:20px;
+  }
+  .result-modal.show{ display:flex; }
+  .result-card{
+    background:var(--track-night-2);
+    border:1px solid var(--lane-line);
+    border-radius:14px;
+    padding:32px;
+    max-width:420px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .result-card .result-eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:.2em;
+    color:var(--speed-amber);
+    text-transform:uppercase;
+  }
+  .result-card h2{
+    font-family:var(--font-display);
+    font-size:34px;
+    text-transform:uppercase;
+    margin:6px 0 18px;
+  }
+  .leaderboard{
+    list-style:none;
+    padding:0; margin:0 0 22px;
+    text-align:left;
+  }
+  .leaderboard li{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 4px;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+    font-family:var(--font-mono);
+    font-size:14px;
+  }
+  .leaderboard li:last-child{ border-bottom:none; }
+  .leaderboard .rank{ color:var(--speed-amber); margin-right:8px; }
+  .leaderboard li.you{ color:var(--player-blue); font-weight:600; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:600px){
+    .racer-row{ grid-template-columns:78px 1fr 42px; gap:8px; }
+    .stats-panel{ grid-template-columns:repeat(2,1fr); gap:18px; }
+    .text-display{ font-size:16px; padding:16px; }
+    header h1{ font-size:30px; }
+  }
+
+  /* focus visibility for accessibility */
+  textarea:focus-visible, select:focus-visible, button:focus-visible{
+    outline:2px solid var(--speed-amber);
+    outline-offset:2px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>EdTech TypeRacer</h1>
+<div class="container">
 
-        <div class="config-section" id="configSection">
-            <label for="customText">Nhập hoặc dán đoạn văn bản dài tùy thích vào đây:</label>
-            <textarea id="customText">Học lập trình không phải là học thuộc lòng các cú pháp câu lệnh. Bản chất của nó là rèn luyện tư duy logic, khả năng giải quyết vấn đề và cách tổ chức hệ thống cấu trúc dữ liệu một cách tối ưu nhất. Khi bạn đối mặt với một đoạn văn bản dài hoặc một thuật toán phức tạp, hãy chia nhỏ nó ra thành từng phần để xử lý như cách chúng ta xây dựng từng khối module trong công nghệ phần mềm hiện đại vậy.</textarea>
-        </div>
-        
-        <div class="racetrack">
-            <div class="lane lane-player">
-                <div class="lane-info"><span class="player-name">Bạn (Người chơi)</span><span id="playerProgressText">0%</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="playerProgress"></div></div>
-            </div>
-            <div class="lane lane-bot1">
-                <div class="lane-info"><span class="bot-name">🤖 Bot Cần Mẫn (Trung bình)</span><span id="bot1ProgressText">0%</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bot1Progress"></div></div>
-            </div>
-            <div class="lane lane-bot2">
-                <div class="lane-info"><span class="bot-name">⚡ Bot Siêu Tốc (Khó)</span><span id="bot2ProgressText">0%</span></div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" id="bot2Progress"></div></div>
-            </div>
-        </div>
+  <header>
+    <div class="eyebrow">LUYỆN GÕ TỐC ĐỘ</div>
+    <h1>TỐC ĐỘ <span>//</span> ĐUA GÕ CHỮ</h1>
+    <p class="sub">Dán đoạn văn của bạn, chọn độ khó, và xem bạn có vượt được các đối thủ bot không.</p>
+  </header>
 
-        <div class="text-display" id="textDisplay"></div>
-
-        <div class="input-panel">
-            <input type="text" class="type-input" id="typeInput" placeholder="Bấm nút bắt đầu để mở khóa đua..." disabled autocomplete="off">
-            <div class="stats">
-                <div class="stat-box"><span>WPM</span><div id="wpmDisplay">0</div></div>
-                <div class="stat-box"><span>Thời gian</span><div id="timeDisplay">0s</div></div>
-            </div>
-        </div>
-        
-        <div class="control-panel">
-            <button class="btn" id="startBtn">Bắt đầu đua</button>
-            <div class="countdown" id="countdownDisplay"></div>
-        </div>
-
-        <div class="leaderboard" id="leaderboard">
-            <h3>Kết Quả Chung Cuộc</h3>
-            <ol id="rankList"></ol>
-        </div>
+  <!-- INPUT SECTION -->
+  <section class="panel input-section" id="inputSection">
+    <label for="customText">Dán văn bản luyện gõ vào đây</label>
+    <textarea id="customText" placeholder="Dán hoặc nhập đoạn văn bạn muốn luyện gõ...">Học gõ chữ nhanh không chỉ giúp bạn làm việc hiệu quả hơn mà còn rèn luyện sự tập trung và phản xạ của ngón tay. Hãy thử thách bản thân với đoạn văn này để xem tốc độ của bạn nhanh đến đâu.</textarea>
+    <div class="controls-row">
+      <select id="difficulty">
+        <option value="easy">Độ khó: Dễ (Bot 20-40 WPM)</option>
+        <option value="medium" selected>Độ khó: Vừa (Bot 35-65 WPM)</option>
+        <option value="hard">Độ khó: Khó (Bot 55-95 WPM)</option>
+      </select>
+      <button class="btn btn-primary" id="startBtn">Bắt Đầu Đua</button>
     </div>
+  </section>
 
-    <script>
-        let targetText = "";
-        let timerInterval = null;
-        let botInterval = null;
-        let startTime = null;
-        let isPlaying = false;
+  <!-- RACE TRACK -->
+  <section class="panel" id="raceTrackPanel" style="display:none;">
+    <div class="race-track" id="raceTrack"></div>
+  </section>
 
-        // Lưu vị trí chỉ số (index) ký tự ĐÚNG liên tục cuối cùng
-        let lastCorrectIndex = 0; 
+  <!-- STATS -->
+  <section class="panel stats-panel" id="statsPanel" style="display:none;">
+    <div class="stat-box">
+      <div class="stat-label">WPM</div>
+      <div class="stat-value" id="statWpm">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Thời gian</div>
+      <div class="stat-value accent-green" id="statTime">0.0s</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Độ chính xác</div>
+      <div class="stat-value" id="statAccuracy">100%</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Lỗi</div>
+      <div class="stat-value accent-red" id="statErrors">0</div>
+    </div>
+  </section>
 
-        let bots = [
-            { id: 1, name: "🤖 Bot Cần Mẫn", baseWpm: 40, progress: 0, finished: false, element: document.getElementById('bot1Progress'), textElement: document.getElementById('bot1ProgressText') },
-            { id: 2, name: "⚡ Bot Siêu Tốc", baseWpm: 70, progress: 0, finished: false, element: document.getElementById('bot2Progress'), textElement: document.getElementById('bot2ProgressText') }
-        ];
+  <!-- TEXT DISPLAY -->
+  <section class="panel" id="textPanel" style="display:none;">
+    <div class="text-display" id="textDisplay"></div>
+    <div class="hint-row">Gõ ký tự sai sẽ bị khóa — nhấn <strong>Backspace</strong> để sửa rồi tiếp tục.</div>
+    <input id="hiddenInput" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  </section>
 
-        let ranks = [];
+  <div style="text-align:center;">
+    <button class="btn btn-ghost" id="resetBtn" style="display:none;">Đua Lại Từ Đầu</button>
+  </div>
 
-        const customText = document.getElementById('customText');
-        const textDisplay = document.getElementById('textDisplay');
-        const typeInput = document.getElementById('typeInput');
-        const startBtn = document.getElementById('startBtn');
-        const countdownDisplay = document.getElementById('countdownDisplay');
-        const timeDisplay = document.getElementById('timeDisplay');
-        const wpmDisplay = document.getElementById('wpmDisplay');
-        const playerProgress = document.getElementById('playerProgress');
-        const playerProgressText = document.getElementById('playerProgressText');
-        const leaderboard = document.getElementById('leaderboard');
-        const rankList = document.getElementById('rankList');
+</div>
 
-        startBtn.addEventListener('click', initCountdown);
-        typeInput.addEventListener('input', handleTypingUXUpdate);
+<!-- RESULT MODAL -->
+<div class="result-modal" id="resultModal">
+  <div class="result-card">
+    <div class="result-eyebrow">KẾT QUẢ ĐUA</div>
+    <h2 id="resultTitle">VỀ ĐÍCH!</h2>
+    <ul class="leaderboard" id="leaderboard"></ul>
+    <button class="btn btn-primary" id="modalRestartBtn" style="width:100%;">Đua Lại</button>
+  </div>
+</div>
 
-        // Render cấu trúc chữ ban đầu
-        renderTextHTML("", 0);
+<script>
+(function(){
+  "use strict";
 
-        // Tạo thẻ span cho từng ký tự để đổi màu linh hoạt
-        function renderTextHTML(inputValue, currentCorrectLen) {
-            targetText = customText.value.trim();
-            textDisplay.innerHTML = "";
-            
-            let activeSpan = null;
+  /* ============ DOM REFERENCES ============ */
+  const customText      = document.getElementById('customText');
+  const difficultySel    = document.getElementById('difficulty');
+  const startBtn         = document.getElementById('startBtn');
+  const resetBtn         = document.getElementById('resetBtn');
+  const inputSection      = document.getElementById('inputSection');
+  const raceTrackPanel    = document.getElementById('raceTrackPanel');
+  const raceTrackEl       = document.getElementById('raceTrack');
+  const statsPanel        = document.getElementById('statsPanel');
+  const textPanel          = document.getElementById('textPanel');
+  const textDisplay        = document.getElementById('textDisplay');
+  const hiddenInput        = document.getElementById('hiddenInput');
+  const statWpm            = document.getElementById('statWpm');
+  const statTime           = document.getElementById('statTime');
+  const statAccuracy       = document.getElementById('statAccuracy');
+  const statErrors         = document.getElementById('statErrors');
+  const resultModal        = document.getElementById('resultModal');
+  const resultTitle        = document.getElementById('resultTitle');
+  const leaderboardEl      = document.getElementById('leaderboard');
+  const modalRestartBtn    = document.getElementById('modalRestartBtn');
 
-            for (let i = 0; i < targetText.length; i++) {
-                const span = document.createElement('span');
-                span.innerText = targetText[i];
-                
-                if (i < inputValue.length) {
-                    // Nếu nằm trong phạm vi người dùng đã gõ
-                    if (i < currentCorrectLen) {
-                        span.classList.add('char-correct'); // Đoạn gõ đúng màu xanh
-                    } else {
-                        span.classList.add('char-incorrect'); // Đoạn gõ sai hiển thị nền Đỏ rõ ràng
-                    }
-                } else if (i === inputValue.length && isPlaying) {
-                    span.classList.add('char-current'); // Con trỏ ký tự hiện tại
-                    activeSpan = span;
-                }
-                textDisplay.appendChild(span);
-            }
+  /* ============ DIFFICULTY RANGES (WPM) ============ */
+  const DIFFICULTY_RANGES = {
+    easy:   { min: 20, max: 40 },
+    medium: { min: 35, max: 65 },
+    hard:   { min: 55, max: 95 }
+  };
 
-            // [SỬA LỖI 1]: Tự động cuộn phần hiển thị để ký tự hiện tại luôn nằm trong khung nhìn
-            if (activeSpan) {
-                activeSpan.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest'
-                });
-            }
-        }
+  const BOT_NAMES = ['Bot Tia Chớp', 'Bot Rùa Thép', 'Bot Cuồng Phong'];
+  const BOT_COUNT = 3;
 
-        function initCountdown() {
-            if (isPlaying) return;
-            
-            targetText = customText.value.trim();
-            if(!targetText) return alert("Vui lòng nhập văn bản!");
+  /* ============ STATE ============ */
+  let raceText = "";
+  let currentIndex = 0;
+  let totalErrors = 0;          // tổng số lần gõ sai (để tính độ chính xác)
+  let totalKeystrokes = 0;
+  let startTime = null;
+  let isRaceActive = false;
+  let isFinished = false;
+  let charSpans = [];
 
-            customText.disabled = true;
-            startBtn.disabled = true;
-            typeInput.value = "";
-            lastCorrectIndex = 0;
-            timeDisplay.innerText = "0s";
-            wpmDisplay.innerText = "0";
-            playerProgress.style.width = "0%";
-            playerProgressText.innerText = "0%";
-            leaderboard.style.display = "none";
-            
-            bots.forEach(bot => {
-                bot.progress = 0;
-                bot.finished = false;
-                bot.element.style.width = "0%";
-                bot.textElement.innerText = "0%";
-            });
-            ranks = [];
-            renderTextHTML("", 0);
+  let bots = [];                // {id,name,baseWpm,currentWpm,charIndex,accumulatedChars,finished,finishTime,el,fillEl,pctEl}
+  let gameLoopId = null;
+  let lastTickTime = null;
+  let statsIntervalId = null;
+  let wpmRebalanceTimer = 0;
 
-            let count = 3;
-            countdownDisplay.innerText = `Sẵn sàng: ${count}`;
-            
-            let countdownInterval = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    countdownDisplay.innerText = `Sẵn sàng: ${count}`;
-                } else {
-                    clearInterval(countdownInterval);
-                    countdownDisplay.innerText = "ĐUA !!!";
-                    startGame();
-                }
-            }, 1000);
-        }
+  /* ============ UTILITIES ============ */
+  function randomRange(min, max){
+    return Math.random() * (max - min) + min;
+  }
 
-        function startGame() {
-            isPlaying = true;
-            startTime = new Date();
-            typeInput.disabled = false;
-            typeInput.placeholder = "Gõ đoạn văn trên tại đây...";
-            typeInput.focus();
-            renderTextHTML("", 0);
+  function clamp(val, min, max){
+    return Math.max(min, Math.min(max, val));
+  }
 
-            timerInterval = setInterval(() => {
-                let elapsed = Math.floor((new Date() - startTime) / 1000);
-                timeDisplay.innerText = `${elapsed}s`;
-                if (elapsed > 0) {
-                    let words = lastCorrectIndex / 5;
-                    wpmDisplay.innerText = Math.round(words / (elapsed / 60));
-                }
-            }, 1000);
+  function escapeChar(ch){
+    if(ch === ' ') return ' ';
+    return ch;
+  }
 
-            startBotSimulation();
-        }
+  /* ============ RENDER TEXT INTO SPANS ============ */
+  function renderText(text){
+    textDisplay.innerHTML = '';
+    charSpans = [];
+    for(let i=0;i<text.length;i++){
+      const span = document.createElement('span');
+      span.className = 'char untyped';
+      span.textContent = escapeChar(text[i]);
+      if(i === 0) span.classList.add('current');
+      textDisplay.appendChild(span);
+      charSpans.push(span);
+    }
+  }
 
-        // [SỬA LỖI 2]: LOGIC SO KHỚP CHỮ KIỂU TYPERACER THỰC TẾ
-        function handleTypingUXUpdate() {
-            if (!isPlaying) return;
+  function updateCharVisual(){
+    for(let i=0;i<charSpans.length;i++){
+      const span = charSpans[i];
+      span.classList.remove('correct','incorrect','current','untyped');
+      if(i < currentIndex){
+        span.classList.add('correct');
+      } else if(i === currentIndex){
+        span.classList.add('current');
+      } else {
+        span.classList.add('untyped');
+      }
+    }
+  }
 
-            let inputValue = typeInput.value;
-            
-            // Tìm độ dài chuỗi khớp đúng liên tục tính từ ký tự đầu tiên
-            let currentCorrectLen = 0;
-            while (currentCorrectLen < inputValue.length && 
-                   currentCorrectLen < targetText.length && 
-                   inputValue[currentCorrectLen] === targetText[currentCorrectLen]) {
-                currentCorrectLen++;
-            }
+  /* ============ RACE TRACK / PROGRESS BARS ============ */
+  function buildRaceTrack(){
+    raceTrackEl.innerHTML = '';
 
-            lastCorrectIndex = currentCorrectLen;
+    // Player row
+    const playerRow = createRacerRow('player', 'Bạn', true);
+    raceTrackEl.appendChild(playerRow.row);
+    playerRacer = playerRow;
 
-            // Kiểm tra trạng thái lỗi để cập nhật khung Input
-            if (currentCorrectLen < inputValue.length) {
-                // Nếu độ dài gõ đúng nhỏ hơn độ dài đang nhập -> Đang có ký tự SAI hiện diện
-                typeInput.classList.add('input-error');
-            } else {
-                typeInput.classList.remove('input-error');
-            }
+    // Bot rows
+    bots = [];
+    const range = DIFFICULTY_RANGES[difficultySel.value];
+    for(let i=0;i<BOT_COUNT;i++){
+      const baseWpm = randomRange(range.min, range.max);
+      const rowData = createRacerRow('bot-'+i, BOT_NAMES[i] || ('Bot '+(i+1)), false);
+      raceTrackEl.appendChild(rowData.row);
+      bots.push({
+        id:'bot-'+i,
+        name: BOT_NAMES[i] || ('Bot '+(i+1)),
+        baseWpm: baseWpm,
+        currentWpm: baseWpm,
+        charIndex: 0,
+        accumulatedChars: 0,
+        finished:false,
+        finishTime:null,
+        lagUntil:0,
+        el: rowData.row,
+        fillEl: rowData.fillEl,
+        pctEl: rowData.pctEl
+      });
+    }
+  }
 
-            // Cập nhật tiến trình của người chơi dựa trên số ký tự ĐÚNG
-            let progressPercent = Math.floor((currentCorrectLen / targetText.length) * 100);
-            playerProgress.style.width = `${progressPercent}%`;
-            playerProgressText.innerText = `${progressPercent}%`;
+  let playerRacer = null;
 
-            // Render lại màu chữ trên màn hình (vừa cập nhật màu đỏ lỗi, vừa kích hoạt cuộn)
-            renderTextHTML(inputValue, currentCorrectLen);
+  function createRacerRow(id, name, isPlayer){
+    const row = document.createElement('div');
+    row.className = 'racer-row ' + (isPlayer ? 'is-player' : 'is-bot');
+    row.dataset.id = id;
 
-            // Kiểm tra xem đã hoàn thành toàn bộ bài chưa
-            if (currentCorrectLen === targetText.length) {
-                finishRace("Bạn (Người chơi)");
-            }
-        }
+    const nameEl = document.createElement('div');
+    nameEl.className = 'racer-name';
+    const dot = document.createElement('span');
+    dot.className = 'racer-dot';
+    dot.style.background = isPlayer ? 'var(--player-blue)' : 'var(--speed-amber)';
+    nameEl.appendChild(dot);
+    const nameText = document.createElement('span');
+    nameText.textContent = name;
+    nameEl.appendChild(nameText);
 
-        // THUẬT TOÁN ĐIỀU KHIỂN BOT DYNAMIC
-        function startBotSimulation() {
-            botInterval = setInterval(() => {
-                let totalChars = targetText.length;
-                let allBotsFinished = true;
+    const lane = document.createElement('div');
+    lane.className = 'lane';
+    const fill = document.createElement('div');
+    fill.className = 'progress-fill';
+    lane.appendChild(fill);
 
-                bots.forEach(bot => {
-                    if (bot.finished) return;
-                    allBotsFinished = false;
+    const pct = document.createElement('div');
+    pct.className = 'pct';
+    pct.textContent = '0%';
 
-                    let variance = Math.floor(Math.random() * 20) - 10; 
-                    let currentWpm = bot.baseWpm + variance;
-                    let charsPerSecond = (Math.max(currentWpm, 10) * 5) / 60;
-                    
-                    let currentBotChars = (bot.progress / 100) * totalChars + charsPerSecond;
-                    let progressPercent = Math.min(Math.floor((currentBotChars / totalChars) * 100), 100);
-                    
-                    bot.progress = progressPercent;
-                    bot.element.style.width = `${progressPercent}%`;
-                    bot.textElement.innerText = `${progressPercent}%`;
+    row.appendChild(nameEl);
+    row.appendChild(lane);
+    row.appendChild(pct);
 
-                    if (bot.progress >= 100) {
-                        bot.finished = true;
-                        finishRace(bot.name);
-                    }
-                });
+    return { row, fillEl: fill, pctEl: pct };
+  }
 
-                if (allBotsFinished) clearInterval(botInterval);
-            }, 1000);
-        }
+  function updateRacerProgress(fillEl, pctEl, index, total, finished){
+    const percent = Math.min(100, (index / total) * 100);
+    fillEl.style.width = percent.toFixed(1) + '%';
+    pctEl.textContent = Math.round(percent) + '%';
+    if(finished){
+      fillEl.classList.add('finished');
+    }
+  }
 
-        function finishRace(runnerName) {
-            if (!ranks.includes(runnerName)) ranks.push(runnerName);
+  /* ============ BOT WPM ALGORITHM (Nhiệm vụ 2) ============ */
+  function rebalanceBotSpeeds(){
+    bots.forEach(bot=>{
+      if(bot.finished) return;
 
-            if (runnerName === "Bạn (Người chơi)") {
-                isPlaying = false;
-                clearInterval(timerInterval);
-                clearInterval(botInterval);
-                typeInput.disabled = true;
-                customText.disabled = false;
-                startBtn.disabled = false;
-                countdownDisplay.innerText = "HẾT GIỜ ĐUA!";
-                
-                bots.forEach(bot => {
-                    if (!bot.finished) {
-                        ranks.push(bot.name);
-                        bot.finished = true;
-                        bot.element.style.width = "100%";
-                        bot.textElement.innerText = "100%";
-                    }
-                });
-                showLeaderboard();
-            }
-        }
+      // Dao động WPM quanh baseWpm, có biên độ +-30%
+      const variance = bot.baseWpm * 0.3;
+      let newWpm = bot.baseWpm + randomRange(-variance, variance);
+      newWpm = clamp(newWpm, bot.baseWpm * 0.6, bot.baseWpm * 1.3);
+      bot.currentWpm = newWpm;
 
-        function showLeaderboard() {
-            leaderboard.style.display = "block";
-            rankList.innerHTML = "";
-            ranks.forEach((name, index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `Hạng ${index + 1}: <strong>${name}</strong>`;
-                if(name === "Bạn (Người chơi)") li.style.color = "var(--primary)";
-                rankList.appendChild(li);
-            });
+      // 6% xác suất bot bị "khựng" lại (lag spike) mô phỏng ngẫm nghĩ / gõ sai
+      if(Math.random() < 0.06){
+        bot.lagUntil = performance.now() + randomRange(300, 800);
+      }
+    });
+  }
+
+  function updateBots(deltaMs, nowMs){
+    bots.forEach(bot=>{
+      if(bot.finished) return;
+
+      // Nếu đang trong giai đoạn lag, không tăng tiến độ
+      if(nowMs < bot.lagUntil){
+        return;
+      }
+
+      const charsPerSecond = (bot.currentWpm * 5) / 60;
+      const increment = charsPerSecond * (deltaMs / 1000);
+      bot.accumulatedChars += increment;
+
+      if(bot.accumulatedChars >= 1){
+        const wholeChars = Math.floor(bot.accumulatedChars);
+        bot.charIndex = Math.min(raceText.length, bot.charIndex + wholeChars);
+        bot.accumulatedChars -= wholeChars;
+      }
+
+      updateRacerProgress(bot.fillEl, bot.pctEl, bot.charIndex, raceText.length, bot.charIndex >= raceText.length);
+
+      if(bot.charIndex >= raceText.length && !bot.finished){
+        bot.finished = true;
+        bot.finishTime = (nowMs - startTime) / 1000;
+      }
+    });
+
+    checkRaceEnd();
+  }
+
+  /* ============ GAME LOOP ============ */
+  function gameLoop(timestamp){
+    if(!isRaceActive) return;
+
+    if(lastTickTime === null) lastTickTime = timestamp;
+    const deltaMs = timestamp - lastTickTime;
+    lastTickTime = timestamp;
+
+    wpmRebalanceTimer += deltaMs;
+    if(wpmRebalanceTimer >= 1200){
+      rebalanceBotSpeeds();
+      wpmRebalanceTimer = 0;
+    }
+
+    updateBots(deltaMs, timestamp);
+
+    gameLoopId = requestAnimationFrame(gameLoop);
+  }
+
+  /* ============ PLAYER STATS ============ */
+  function calculatePlayerWpm(){
+    if(!startTime) return 0;
+    const elapsedMinutes = (performance.now() - startTime) / 60000;
+    if(elapsedMinutes <= 0) return 0;
+    const wordsTyped = currentIndex / 5;
+    return Math.round(wordsTyped / elapsedMinutes);
+  }
+
+  function calculateAccuracy(){
+    if(totalKeystrokes === 0) return 100;
+    const correctKeystrokes = totalKeystrokes - totalErrors;
+    return Math.max(0, Math.round((correctKeystrokes / totalKeystrokes) * 100));
+  }
+
+  function updateStatsDisplay(){
+    const elapsedSec = startTime ? (performance.now() - startTime) / 1000 : 0;
+    statWpm.textContent = calculatePlayerWpm();
+    statTime.textContent = elapsedSec.toFixed(1) + 's';
+    statAccuracy.textContent = calculateAccuracy() + '%';
+    statErrors.textContent = totalErrors;
+  }
+
+  /* ============ TYPING LOGIC (Nhiệm vụ 1) ============ */
+  function handleKeyDown(e){
+    if(!isRaceActive || isFinished) return;
+
+    // Backspace: xoá lùi để sửa lỗi
+    if(e.key === 'Backspace'){
+      e.preventDefault();
+      if(currentIndex > 0){
+        currentIndex--;
+        updateCharVisual();
+        updatePlayerProgress();
+      }
+      return;
+    }
+
+    // Bỏ qua các phím điều khiển không phải ký tự in được
+    if(e.key.length !== 1) return;
+    e.preventDefault();
+
+    const expectedChar = raceText[currentIndex];
+    const typedChar = e.key;
+    totalKeystrokes++;
+
+    if(typedChar === expectedChar){
+      // Đúng ký tự -> cho đi tiếp
+      currentIndex++;
+      updateCharVisual();
+      updatePlayerProgress();
+
+      if(currentIndex >= raceText.length){
+        finishPlayer();
+      }
+    } else {
+      // Sai ký tự -> khóa tại chỗ, tô đỏ ký tự hiện tại, rung nhẹ
+      totalErrors++;
+      const span = charSpans[currentIndex];
+      span.classList.remove('current','untyped');
+      span.classList.add('incorrect');
+      textDisplay.classList.remove('locked-error');
+      // re-trigger animation
+      void textDisplay.offsetWidth;
+      textDisplay.classList.add('locked-error');
+    }
+  }
+
+  function updatePlayerProgress(){
+    updateRacerProgress(playerRacer.fillEl, playerRacer.pctEl, currentIndex, raceText.length, currentIndex>=raceText.length);
+  }
+
+  function finishPlayer(){
+    isFinished = true;
+    playerFinishTime = (performance.now() - startTime) / 1000;
+    checkRaceEnd(true);
+  }
+
+  let playerFinishTime = null;
+
+  /* ============ RACE END / RESULTS ============ */
+  function checkRaceEnd(playerJustFinished){
+    const allBotsFinished = bots.every(b=>b.finished);
+    if((isFinished || playerJustFinished) || allBotsFinished){
+      // Kết thúc đua khi: player xong, HOẶC tất cả bot đã xong
+      if(isFinished || allBotsFinished){
+        endRace();
+      }
+    }
+  }
+
+  function endRace(){
+    if(!isRaceActive) return; // tránh gọi nhiều lần
+    isRaceActive = false;
+    if(gameLoopId) cancelAnimationFrame(gameLoopId);
+    if(statsIntervalId) clearInterval(statsIntervalId);
+    updateStatsDisplay();
+
+    // Tính kết quả xếp hạng
+    const results = [];
+    results.push({
+      name:'Bạn',
+      time: isFinished ? playerFinishTime : Infinity,
+      isPlayer:true
+    });
+    bots.forEach(bot=>{
+      results.push({
+        name: bot.name,
+        time: bot.finished ? bot.finishTime : Infinity,
+        isPlayer:false
+      });
+    });
+    results.sort((a,b)=> a.time - b.time);
+
+    showResultModal(results);
+  }
+
+  function showResultModal(results){
+    const playerRank = results.findIndex(r=>r.isPlayer) + 1;
+    if(playerRank === 1){
+      resultTitle.textContent = 'VỀ NHẤT! 🏁';
+    } else if(isFinished){
+      resultTitle.textContent = 'VỀ ĐÍCH HẠNG ' + playerRank;
+    } else {
+      resultTitle.textContent = 'CHƯA VỀ ĐÍCH';
+    }
+
+    leaderboardEl.innerHTML = '';
+    results.forEach((r, idx)=>{
+      const li = document.createElement('li');
+      if(r.isPlayer) li.classList.add('you');
+      const rankSpan = document.createElement('span');
+      rankSpan.innerHTML = '<span class="rank">#'+(idx+1)+'</span> ' + r.name;
+      const timeSpan = document.createElement('span');
+      timeSpan.textContent = (r.time === Infinity) ? '— chưa xong' : r.time.toFixed(2)+'s';
+      li.appendChild(rankSpan);
+      li.appendChild(timeSpan);
+      leaderboardEl.appendChild(li);
+    });
+
+    resultModal.classList.add('show');
+  }
+
+  /* ============ INIT / START / RESET ============ */
+  function initRace(){
+    const text = customText.value.trim();
+    if(!text){
+      customText.focus();
+      customText.style.borderColor = 'var(--stop-red)';
+      setTimeout(()=>{ customText.style.borderColor=''; }, 1000);
+      return;
+    }
+
+    raceText = text;
+    currentIndex = 0;
+    totalErrors = 0;
+    totalKeystrokes = 0;
+    isFinished = false;
+    playerFinishTime = null;
+    wpmRebalanceTimer = 0;
+    lastTickTime = null;
+
+    renderText(raceText);
+    buildRaceTrack();
+
+    inputSection.style.display = 'none';
+    raceTrackPanel.style.display = '';
+    statsPanel.style.display = '';
+    textPanel.style.display = '';
+    resetBtn.style.display = '';
+    resultModal.classList.remove('show');
+
+    isRaceActive = true;
+    startTime = performance.now();
+
+    hiddenInput.value = '';
+    hiddenInput.focus();
+
+    gameLoopId = requestAnimationFrame(gameLoop);
+    statsIntervalId = setInterval(updateStatsDisplay, 200);
+  }
+
+  function resetToSetup(){
+    isRaceActive = false;
+    isFinished = false;
+    if(gameLoopId) cancelAnimationFrame(gameLoopId);
+    if(statsIntervalId) clearInterval(statsIntervalId);
+    resultModal.classList.remove('show');
+
+    inputSection.style.display = '';
+    raceTrackPanel.style.display = 'none';
+    statsPanel.style.display = 'none';
+    textPanel.style.display = 'none';
+    resetBtn.style.display = 'none';
+  }
+
+  function restartSameText(){
+    resultModal.classList.remove('show');
+    initRace();
+  }
+
+  /* ============ EVENT LISTENERS ============ */
+  startBtn.addEventListener('click', initRace);
+  resetBtn.addEventListener('click', resetToSetup);
+  modalRestartBtn.addEventListener('click', restartSameText);
+
+  // Bắt sự kiện gõ qua input ẩn (hỗ trợ mobile + IME tốt hơn) song song với keydown trên document
+  document.addEventListener('keydown', function(e){
+    if(!isRaceActive) return;
+    // Đảm bảo focus luôn ở hiddenInput khi đang đua
+    if(document.activeElement !== hiddenInput && e.key.length === 1){
+      hiddenInput.focus();
+    }
+    handleKeyDown(e);
+  });
+
+  // Click vào vùng text để focus lại input ẩn (đề phòng mất focus)
+  textDisplay.addEventListener('click', function(){
+    if(isRaceActive) hiddenInput.focus();
+  });
+
+})();
+</script>
+
+</body>
+</html>
